@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Waypoint : MonoBehaviour
@@ -8,16 +6,23 @@ public class Waypoint : MonoBehaviour
     {
         None,
         Start1,
+        Start2,
         End1,
+        End2,
         OrderHere1,
         OrderHere2,
-        Queue1a,
+        OrderHere3,
         Queue1b,
+        Queue1c,
         Checkout1,
         PickupWait1,
+        PickupWait2,
+        PickupWait3,
+        PickupWait4,
         Pickup1,
     }
 
-    public Waypoints _waypoints;
+    public Waypoints WaypointTypes;
 
+    internal bool WaypointOccupied;
 }

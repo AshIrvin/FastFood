@@ -1,9 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class WaypointManager : MonoBehaviour
 {
-    //[SerializeField] private Transform _waypointGroup;
     [SerializeField] private Waypoint[] _startPoints;
     [SerializeField] private Waypoint[] _orderPoints;
     [SerializeField] private Waypoint[] _queuePoints;
@@ -15,48 +15,48 @@ public class WaypointManager : MonoBehaviour
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private AnimationManager _animationManager;
 
-    private int _stepProcess = 0;
-
-    private void Start()
+    internal Vector3 GetNextWaypoint(Waypoint.Waypoints currentWaypoint)
     {
-        UiManager.onAutoNextWaypoint += QueueTestWaypoints;
-    }
+        Debug.Log("current Waypoint: " + currentWaypoint);
+        var nextWaypoint = (Waypoint.Waypoints)(((int)currentWaypoint + 1) % Enum.GetNames(typeof(Waypoint.Waypoints)).Length);
+        Debug.Log("Next Waypoint: " + nextWaypoint);
 
-    private Vector3 GetNextWaypoint()
-    {
-        // TODO - animation shouldn't be in here
-
-        switch (_stepProcess)
+        switch (nextWaypoint)
         {
-            case 0:
-                _animationManager.PlayAnimation("Standing Idle");
-                return _startPoints[Random.Range(0, _startPoints.Length)].transform.position;
-            case 1:
-                _animationManager.PlayAnimation("Walk_07_Stroll_Loop_IP");
-                return _orderPoints[Random.Range(0, _orderPoints.Length)].transform.position;
-            case 2:
-                _animationManager.PlayAnimation("Walk_07_Stroll_Loop_IP");
-                return _queuePoints[Random.Range(0, _queuePoints.Length)].transform.position;
-            case 3:
-                _animationManager.PlayAnimation("Convo_11_Listening_Loop");
-                return _checkoutPoints[Random.Range(0, _checkoutPoints.Length)].transform.position;
-            case 4:
-                return _waitPoints[Random.Range(0, _waitPoints.Length)].transform.position;
-            case 5:
-                return _pickupPoints[Random.Range(0, _pickupPoints.Length)].transform.position;
-            case 6:
-                return _endPoints[Random.Range(0, _endPoints.Length)].transform.position;
+            case Waypoint.Waypoints.None: 
+                return _startPoints[0].transform.position;
+            case Waypoint.Waypoints.Start1: 
+                return _startPoints[0].transform.position;
+            case Waypoint.Waypoints.Start2: 
+                return _startPoints[1].transform.position;
+            case Waypoint.Waypoints.OrderHere1: 
+                return _orderPoints[0].transform.position;
+            case Waypoint.Waypoints.OrderHere2: 
+                return _orderPoints[1].transform.position;
+            case Waypoint.Waypoints.OrderHere3: 
+                return _orderPoints[2].transform.position;
+            case Waypoint.Waypoints.Queue1c: 
+                return _queuePoints[0].transform.position;
+            case Waypoint.Waypoints.Queue1b: 
+                return _queuePoints[1].transform.position;
+            case Waypoint.Waypoints.Checkout1: 
+                return _checkoutPoints[0].transform.position;
+            case Waypoint.Waypoints.PickupWait1: 
+                return _waitPoints[0].transform.position;
+            case Waypoint.Waypoints.PickupWait2: 
+                return _waitPoints[1].transform.position;
+            case Waypoint.Waypoints.PickupWait3: 
+                return _waitPoints[2].transform.position;
+            case Waypoint.Waypoints.PickupWait4:
+                return _waitPoints[3].transform.position;
+            case Waypoint.Waypoints.Pickup1: 
+                return _pickupPoints[0].transform.position;
+            case Waypoint.Waypoints.End1: 
+                return _endPoints[0].transform.position;
+            case Waypoint.Waypoints.End2: 
+                return _endPoints[1].transform.position;
         }
 
         return Vector3.zero;
-    }
-
-    private void QueueTestWaypoints()
-    {
-        _agent.SetDestination(GetNextWaypoint());
-        _stepProcess++;
-
-        if (_stepProcess >= 5)
-            _stepProcess = 0;
     }
 }
