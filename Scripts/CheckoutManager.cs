@@ -3,10 +3,6 @@ using UnityEngine;
 
 public class CheckoutManager : MonoBehaviour
 {
-    /* Press button for item
-     * Item price added to till order
-     */
-
     public enum Items
     {
         Burger,
@@ -19,13 +15,31 @@ public class CheckoutManager : MonoBehaviour
 
     [SerializeField] private float _tillPrice;
     [SerializeField] private TextMeshPro _tillPriceText;
-
     [SerializeField] private Items _items;
+    [SerializeField] private string _paymentAccepted = "Payment Accepted";
+    [SerializeField] private string _paymentDeclined = "Payment Declined";
+    [SerializeField] private GameObject[] _orderScreenOutOfOrder;
+
+    private void Start()
+    {
+        AvatarManager.OnTryingToPay += UpdateTillScreen;
+        AvatarManager.OnPressingOrderScreen += DisplayOutOfOrder;
+    }
+
+    private void DisplayOutOfOrder(int n)
+    {
+        _orderScreenOutOfOrder[n].SetActive(true);
+    }
+
+    private void UpdateTillScreen(string tillText)
+    {
+        _tillPriceText.text = tillText;
+    }
 
     public void AddItem(Items items)
     {
         _tillPrice += GetItemPrice(items);
-        _tillPriceText.text = _tillPrice.ToString("0.00");
+        UpdateTillScreen(_tillPrice.ToString("0.00"));
 
         // TODO - add till ka-ching sound
     }

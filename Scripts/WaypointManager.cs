@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class WaypointManager : MonoBehaviour
 {
@@ -12,14 +11,20 @@ public class WaypointManager : MonoBehaviour
     [SerializeField] private Waypoint[] _pickupPoints;
     [SerializeField] private Waypoint[] _endPoints;
 
-    [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private AnimationManager _animationManager;
+    private AnimationManager _animManager;
+
+    private void Start()
+    {
+        _animManager = GetComponent<AnimationManager>();
+    }
 
     internal Vector3 GetNextWaypoint(Waypoint.Waypoints currentWaypoint)
     {
         Debug.Log("current Waypoint: " + currentWaypoint);
         var nextWaypoint = (Waypoint.Waypoints)(((int)currentWaypoint + 1) % Enum.GetNames(typeof(Waypoint.Waypoints)).Length);
         Debug.Log("Next Waypoint: " + nextWaypoint);
+
+        _animManager.SetAvatarToWalk();
 
         switch (nextWaypoint)
         {
@@ -39,8 +44,10 @@ public class WaypointManager : MonoBehaviour
                 return _queuePoints[0].transform.position;
             case Waypoint.Waypoints.Queue1b: 
                 return _queuePoints[1].transform.position;
-            case Waypoint.Waypoints.Checkout1: 
-                return _checkoutPoints[0].transform.position;
+            case Waypoint.Waypoints.Checkout1:
+                if (!_checkoutPoints[0].GetComponent<Waypoint>().IsWaypointOccupied)
+                    return _checkoutPoints[0].transform.position;
+                return _queuePoints[1].transform.position;
             case Waypoint.Waypoints.PickupWait1: 
                 return _waitPoints[0].transform.position;
             case Waypoint.Waypoints.PickupWait2: 
@@ -55,6 +62,10 @@ public class WaypointManager : MonoBehaviour
                 return _endPoints[0].transform.position;
             case Waypoint.Waypoints.End2: 
                 return _endPoints[1].transform.position;
+            case Waypoint.Waypoints.EndSeated1: 
+                return _endPoints[2].transform.position;
+            case Waypoint.Waypoints.EndSeated2:
+                return _endPoints[2].transform.position;
         }
 
         return Vector3.zero;

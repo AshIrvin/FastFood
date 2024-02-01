@@ -2180,3 +2180,52 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7959786460664494365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069805483763362541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d96c5a595b093c47981cab99dc974d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _startPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  _orderPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _queuePoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _checkoutPoints:
+  - {fileID: 0}
+  _waitPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _pickupPoints:
+  - {fileID: 0}
+  _endPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &5446973486699404806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2069805483763362541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1837bb69cbbc04e895b886b4bf49fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _waypointManager: {fileID: 0}

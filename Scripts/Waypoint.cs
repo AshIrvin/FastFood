@@ -7,22 +7,24 @@ public class Waypoint : MonoBehaviour
         None,
         Start1,
         Start2,
-        End1,
-        End2,
         OrderHere1,
         OrderHere2,
         OrderHere3,
-        Queue1b,
         Queue1c,
+        Queue1b,
         Checkout1,
         PickupWait1,
         PickupWait2,
         PickupWait3,
         PickupWait4,
         Pickup1,
+        End1,
+        End2,
+        EndSeated1,
+        EndSeated2
     }
 
     public Waypoints WaypointTypes;
 
-    internal bool WaypointOccupied;
+    internal bool IsWaypointOccupied;
 }

@@ -3,109 +3,100 @@ using UnityEngine.AI;
 
 public class AnimationManager : MonoBehaviour
 {
-    // Player walks into restaurant 
-    // Looks at tablets, presses button, 'Out of Order'
-    // Walks over and tries the next tablet
-    // Slowly walks towards queue
-    // Points and orders at till
-    // Pays, but is declined
-    // Uses other method, accepted
-    // walks to wait area
-    // Picks up food and walks to exit
-
-    [SerializeField] private GameObject _player;
-
+    private WaypointManager _waypointManager;
+    private AvatarManager _avatarManager;
     private Animator _animator;
     private NavMeshAgent _agent;
 
     private void Start()
     {
-        _animator = _player.GetComponent<Animator>();
-        
-        _agent = _player.GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
+        _waypointManager = GetComponent<WaypointManager>();
+        _avatarManager = GetComponent<AvatarManager>();
 
-        AvatarManager.OnReachingWaypoint += ReachedWaypoint;
+        _avatarManager.OnReachingWaypoint += ReachedWaypoint;
     }
 
     private void LateUpdate()
     {
         if (_agent.velocity.sqrMagnitude > Mathf.Epsilon)
-        {
+        { // TODO - Needs to face waypoint direction
+            Debug.Log("Agent turning.");
             _agent.transform.rotation = Quaternion.LookRotation(_agent.velocity.normalized);
         }
     }
 
-    private void PlayAnimator(string animatorName)
+    internal void SetAvatarToWalk()
     {
-        _animator.Play(animatorName, -1); // -1 plays 1st state
+        _animator.SetBool("Walk", true);
+    }
+
+    private void DisableAnimations()
+    {
+        _animator.SetBool("OrderScreen", false);
+        _animator.SetBool("Queue", false);
+        _animator.SetBool("Wait", false);
+        _animator.SetBool("Walk", false);
+        _animator.SetBool("Pickup", false);
+        _animator.SetBool("Checkout", false);
     }
 
     private void ReachedWaypoint(Waypoint.Waypoints waypoint)
     {
-        // queue animators or ?
-        // create full pay, decline, use other method, accept animation
-        // when 1st pay ends, send update to till message
+        Debug.Log("ReachedWaypoint: " + waypoint);
 
-        // each waypoint will have a specific queue of animations to play
-        // the walk animation will be for between waypoints
-
-        // create the blend states in the animator
-        // activate them when they hit the correct waypoint
+        DisableAnimations();
 
         switch (waypoint)
         {
             case Waypoint.Waypoints.None:
-                PlayAnimator("StandingIdle");
                 break;
             case Waypoint.Waypoints.Start1:
-                PlayAnimator("StandingIdle");
                 break;
             case Waypoint.Waypoints.Start2:
-                PlayAnimator("StandingIdle");
                 break;
             case Waypoint.Waypoints.OrderHere1:
-                //PlayAnimator("ButtonPushing");
-                _animator.SetBool("ButtonPushing", true);
-
-                // show Out of Order
-                // Look at next screen?
+                _animator.SetBool("OrderScreen", true);
                 break;
             case Waypoint.Waypoints.OrderHere2:
-                PlayAnimator("ButtonPushing");
+                _animator.SetBool("OrderScreen", true);
                 break;
             case Waypoint.Waypoints.OrderHere3:
-                PlayAnimator("ButtonPushing");
-
-                // show Out of Order
-                // Look at queue?
-                // QueueAnimation("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("OrderScreen", true);
                 break;
             case Waypoint.Waypoints.Queue1b:
-                PlayAnimator("Convo_11_Listening_Loop"); 
-
-                // stand still
-                // play with phone
+                _animator.SetBool("Queue", true);
                 break;
             case Waypoint.Waypoints.Queue1c:
-                PlayAnimator("Convo_11_Listening_Loop");
+                _animator.SetBool("Queue", true);
                 break;
             case Waypoint.Waypoints.Checkout1:
-                PlayAnimator("Convo_11_Listening_Loop");
+                _animator.SetBool("Checkout", true);
                 break;
             case Waypoint.Waypoints.PickupWait1:
-                PlayAnimator("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("Wait", true);
                 break;
             case Waypoint.Waypoints.PickupWait2:
-                PlayAnimator("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("Wait", true);
                 break;
             case Waypoint.Waypoints.PickupWait3:
-                PlayAnimator("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("Wait", true);
                 break;
             case Waypoint.Waypoints.Pickup1:
-                PlayAnimator("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("Pickup", true);
                 break;
             case Waypoint.Waypoints.End1:
-                PlayAnimator("Walk_07_Stroll_Loop_IP");
+                _animator.SetBool("Walk", true);
+                break;
+            case Waypoint.Waypoints.End2:
+                _animator.SetBool("Walk", true);
+                break;
+            case Waypoint.Waypoints.EndSeated1:
+                _animator.SetBool("Sit", true);
+                break;
+            case Waypoint.Waypoints.EndSeated2:
+                _animator.SetBool("Sit", true);
                 break;
         }
     }
