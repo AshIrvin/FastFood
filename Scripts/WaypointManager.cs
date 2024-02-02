@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class WaypointManager : MonoBehaviour
 {
+    [SerializeField] private UiManager _uiManager;
     [SerializeField] private Waypoint[] _startPoints;
     [SerializeField] private Waypoint[] _orderPoints;
     [SerializeField] private Waypoint[] _queuePoints;
@@ -12,24 +13,28 @@ public class WaypointManager : MonoBehaviour
     [SerializeField] private Waypoint[] _endPoints;
 
     private AnimationManager _animManager;
+    internal Waypoint.Waypoints NextWaypoint;
 
     private void Start()
     {
         _animManager = GetComponent<AnimationManager>();
     }
 
-    internal Vector3 GetNextWaypoint(Waypoint.Waypoints currentWaypoint)
+    internal Vector3 GetNextWaypoint(Waypoint.Waypoints waypoint)
     {
-        Debug.Log("current Waypoint: " + currentWaypoint);
-        var nextWaypoint = (Waypoint.Waypoints)(((int)currentWaypoint + 1) % Enum.GetNames(typeof(Waypoint.Waypoints)).Length);
-        Debug.Log("Next Waypoint: " + nextWaypoint);
+        NextWaypoint = waypoint;
+
+        if (_uiManager._setAvatarToAutoMove)
+            waypoint = (Waypoint.Waypoints)(((int)waypoint + 1) % Enum.GetNames(typeof(Waypoint.Waypoints)).Length);
+        
+        Debug.Log("Next Waypoint: " + waypoint);
 
         _animManager.SetAvatarToWalk();
 
-        switch (nextWaypoint)
+        switch (waypoint)
         {
             case Waypoint.Waypoints.None: 
-                return _startPoints[0].transform.position;
+                return _startPoints[1].transform.position;
             case Waypoint.Waypoints.Start1: 
                 return _startPoints[0].transform.position;
             case Waypoint.Waypoints.Start2: 
@@ -41,13 +46,13 @@ public class WaypointManager : MonoBehaviour
             case Waypoint.Waypoints.OrderHere3: 
                 return _orderPoints[2].transform.position;
             case Waypoint.Waypoints.Queue1c: 
-                return _queuePoints[0].transform.position;
-            case Waypoint.Waypoints.Queue1b: 
                 return _queuePoints[1].transform.position;
+            case Waypoint.Waypoints.Queue1b: 
+                return _queuePoints[0].transform.position;
             case Waypoint.Waypoints.Checkout1:
                 if (!_checkoutPoints[0].GetComponent<Waypoint>().IsWaypointOccupied)
                     return _checkoutPoints[0].transform.position;
-                return _queuePoints[1].transform.position;
+                return _queuePoints[0].transform.position;
             case Waypoint.Waypoints.PickupWait1: 
                 return _waitPoints[0].transform.position;
             case Waypoint.Waypoints.PickupWait2: 

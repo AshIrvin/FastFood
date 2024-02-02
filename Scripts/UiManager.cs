@@ -1,18 +1,17 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
     internal static Action<Waypoint.Waypoints> OnGoToWaypoint;
     internal static Action OnAutoNextWaypoint;
+    internal static Action<bool> OnAutoMode;
     
+    internal bool _setAvatarToAutoMove = false;
 
     [SerializeField] private KeyCode _mapKey = KeyCode.M;
     [SerializeField] private GameObject _mapCanvas;
     [SerializeField] private Camera[] _cameras;
-
-    private bool _setAvatarToAutoMove = false;
 
     private void Update()
     {
@@ -46,5 +45,6 @@ public class UiManager : MonoBehaviour
     public void SetAvatarToAutoMove(bool state)
     {
         _setAvatarToAutoMove = state;
+        OnAutoMode?.Invoke(state);
     }
 }

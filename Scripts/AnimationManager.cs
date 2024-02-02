@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using static Waypoint;
 
 public class AnimationManager : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class AnimationManager : MonoBehaviour
     private AvatarManager _avatarManager;
     private Animator _animator;
     private NavMeshAgent _agent;
+    private Transform _waypoint;
+    private float _rotationSpeed = 3;
 
     private void Start()
     {
@@ -20,16 +23,23 @@ public class AnimationManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (_agent.velocity.sqrMagnitude > Mathf.Epsilon)
-        { // TODO - Needs to face waypoint direction
-            Debug.Log("Agent turning.");
-            _agent.transform.rotation = Quaternion.LookRotation(_agent.velocity.normalized);
+        if (IsAgentStopping())
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(_waypoint.forward);
+            _agent.transform.rotation = Quaternion.Slerp(_agent.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
+    }
+
+    private bool IsAgentStopping()
+    {
+        return (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance &&
+            (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f) && _waypoint != null);
     }
 
     internal void SetAvatarToWalk()
     {
         _animator.SetBool("Walk", true);
+        _waypoint = null;
     }
 
     private void DisableAnimations()
@@ -40,62 +50,64 @@ public class AnimationManager : MonoBehaviour
         _animator.SetBool("Walk", false);
         _animator.SetBool("Pickup", false);
         _animator.SetBool("Checkout", false);
+        _animator.SetBool("Exit", false);
     }
 
-    private void ReachedWaypoint(Waypoint.Waypoints waypoint)
+    private void ReachedWaypoint(Waypoints waypoint, Transform t)
     {
         Debug.Log("ReachedWaypoint: " + waypoint);
+        _waypoint = t;
 
         DisableAnimations();
 
         switch (waypoint)
         {
-            case Waypoint.Waypoints.None:
+            case Waypoints.None:
                 break;
-            case Waypoint.Waypoints.Start1:
+            case Waypoints.Start1:
                 break;
-            case Waypoint.Waypoints.Start2:
+            case Waypoints.Start2:
                 break;
-            case Waypoint.Waypoints.OrderHere1:
+            case Waypoints.OrderHere1:
                 _animator.SetBool("OrderScreen", true);
                 break;
-            case Waypoint.Waypoints.OrderHere2:
+            case Waypoints.OrderHere2:
                 _animator.SetBool("OrderScreen", true);
                 break;
-            case Waypoint.Waypoints.OrderHere3:
+            case Waypoints.OrderHere3:
                 _animator.SetBool("OrderScreen", true);
                 break;
-            case Waypoint.Waypoints.Queue1b:
+            case Waypoints.Queue1b:
                 _animator.SetBool("Queue", true);
                 break;
-            case Waypoint.Waypoints.Queue1c:
+            case Waypoints.Queue1c:
                 _animator.SetBool("Queue", true);
                 break;
-            case Waypoint.Waypoints.Checkout1:
+            case Waypoints.Checkout1:
                 _animator.SetBool("Checkout", true);
                 break;
-            case Waypoint.Waypoints.PickupWait1:
+            case Waypoints.PickupWait1:
                 _animator.SetBool("Wait", true);
                 break;
-            case Waypoint.Waypoints.PickupWait2:
+            case Waypoints.PickupWait2:
                 _animator.SetBool("Wait", true);
                 break;
-            case Waypoint.Waypoints.PickupWait3:
+            case Waypoints.PickupWait3:
                 _animator.SetBool("Wait", true);
                 break;
-            case Waypoint.Waypoints.Pickup1:
+            case Waypoints.Pickup1:
                 _animator.SetBool("Pickup", true);
                 break;
-            case Waypoint.Waypoints.End1:
-                _animator.SetBool("Walk", true);
+            case Waypoints.End1:
+                _animator.SetBool("Exit", true);
                 break;
-            case Waypoint.Waypoints.End2:
-                _animator.SetBool("Walk", true);
+            case Waypoints.End2:
+                _animator.SetBool("Exit", true);
                 break;
-            case Waypoint.Waypoints.EndSeated1:
+            case Waypoints.EndSeated1:
                 _animator.SetBool("Sit", true);
                 break;
-            case Waypoint.Waypoints.EndSeated2:
+            case Waypoints.EndSeated2:
                 _animator.SetBool("Sit", true);
                 break;
         }
